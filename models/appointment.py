@@ -1,6 +1,5 @@
-from email.policy import default
-
 from odoo import api, fields, models
+
 
 class HospitalAppointment(models.Model):
     _name = 'hospital.appointment'
@@ -11,7 +10,7 @@ class HospitalAppointment(models.Model):
     doctor_id = fields.Many2one('res.users', string='Doctor', required=True, tracking=True)
     patient_id = fields.Many2one('hospital.patient', string='Patient')
     pharmacy_line_ids = fields.One2many('appointment.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
-    gender= fields.Selection(related='patient_id.gender')
+    gender= fields.Selection(related='patient_id.gender', store=True)
     appointment_time = fields.Datetime(string='Appointment Time', default=fields.Datetime.now)
     booking_date = fields.Date(string='Booking Date', default=fields.Date.context_today)
     ref = fields.Char(string='Patient Reference')
@@ -44,8 +43,15 @@ class HospitalAppointment(models.Model):
             rec.state = 'done'
 
     def action_cancel(self):
-        for rec in self:
-            rec.state = 'cancel'
+        action = self.env.ref(
+            'hospital_management.action_cancel_appointment'
+        ).read()[0]
+
+        action['context'] = {
+            'default_appointment_id': self.id
+        }
+
+        return action
 
     def action_draft(self):
         for rec in self:

@@ -15,10 +15,15 @@
     'data': [
         'security/ir.model.access.csv',
 
+        'data/patient_tag_data.xml',
+
+        'wizard/cancel_appointment_view.xml',
+
         'views/base_menu.xml',
         'views/patient_view.xml',
         'views/female_patient_view.xml',
         'views/appointment_view.xml',
+        'views/patient_tag_view.xml',
     ],
 
     'demo': [],

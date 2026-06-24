@@ -15,8 +15,9 @@ class HospitalPatient(models.Model):
         ('female', 'Female'),
     ], tracking=True, default='male')
     active = fields.Boolean(string='Active', default=True)
-    appointment_id = fields.Many2one('hospital.appointment', string='Appointments')
-    image= fields.Image(string='Image')
+    appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
+    image = fields.Image(string='Image')
+    tag_ids = fields.Many2many('patient.tag', string='Tags')
 
     @api.depends('date_of_birth')
     def _compute_age(self):
@@ -25,4 +26,4 @@ class HospitalPatient(models.Model):
             if rec.date_of_birth:
                 rec.age = today.year - rec.date_of_birth.year
             else:
-                rec.age = 1
+                rec.age = 0
