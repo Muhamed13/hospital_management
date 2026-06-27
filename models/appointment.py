@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class HospitalAppointment(models.Model):
@@ -8,12 +9,12 @@ class HospitalAppointment(models.Model):
     _rec_name = 'ref'
 
     doctor_id = fields.Many2one('res.users', string='Doctor', required=True, tracking=True)
-    patient_id = fields.Many2one('hospital.patient', string='Patient')
+    patient_id = fields.Many2one('hospital.patient', string='Patient', required=True, ondelete='restrict')
     pharmacy_line_ids = fields.One2many('appointment.pharmacy.lines', 'appointment_id', string='Pharmacy Lines')
-    gender= fields.Selection(related='patient_id.gender', store=True)
+    gender = fields.Selection(related='patient_id.gender', store=True)
     appointment_time = fields.Datetime(string='Appointment Time', default=fields.Datetime.now)
     booking_date = fields.Date(string='Booking Date', default=fields.Date.context_today)
-    ref = fields.Char(string='Patient Reference')
+    ref = fields.Char(string='Reference', default='New', readonly=True, copy=False)
     prescription = fields.Html(string='Prescription')
     priority = fields.Selection([
         ('0', 'Normal'),
@@ -29,10 +30,19 @@ class HospitalAppointment(models.Model):
     ], default='draft', tracking=True)
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
 
-    @api.onchange('patient_id')
-    def _onchange_patient_id(self):
-        if self.patient_id:
-            self.ref = self.patient_id.ref
+    @api.model
+    def create(self, vals):
+        if vals.get('ref', 'New') == 'New':
+            vals['ref'] = self.env['ir.sequence'].next_by_code(
+                'hospital.appointment'
+            )
+        return super().create(vals)
+
+    def unlink(self):
+        for rec in self:
+            if rec.state != 'draft':
+                raise ValidationError(_("Only appointments in Draft state can be deleted."))
+        return super().unlink()
 
     def action_in_consultation(self):
         for rec in self:
@@ -58,6 +68,7 @@ class HospitalAppointment(models.Model):
             rec.state = 'draft'
 
 
+
 class AppointmentPharmacyLines(models.Model):
 
     _name = 'appointment.pharmacy.lines'
@@ -66,4 +77,4 @@ class AppointmentPharmacyLines(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True)
     price_unit = fields.Float(related='product_id.list_price', string='Sales Price')
     qty = fields.Integer(string='Quantity', default=1)
-    appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
+    appointment_id = fields.Many2one('hospital.appointment', string='Appointment', required=True, ondelete='cascade')

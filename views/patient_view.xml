@@ -5,7 +5,7 @@
         <field name="name">hospital.patient.tree</field>
         <field name="model">hospital.patient</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree export_xlsx="0">
                 <field name="name" string="Patient Name"/>
                 <field name="ref"/>
                 <field name="age"/>
@@ -23,17 +23,31 @@
                     <field name="image" widget="image" class="oe_avatar"/>
                     <group>
                         <group>
-                         <field name="name"/>
-                         <field name="date_of_birth"/>
-                         <field name="age"/>
+                            <field name="name"/>
+                            <field name="ref"/>
+                            <field name="gender"/>
+                        </group>
+                        <group>
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
                             <field name="appointment_id"/>
-                     </group>
-                     <group>
-                         <field name="ref"/>
-                         <field name="gender"/>
-                         <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                         <field name="active" invisible="1"/>
-                     </group>
+                            <field name="appointment_count"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Other Information" name="other_info">
+                        <group>
+                            <field name="marital_status"/>
+                            <field name="partner_name"
+                                   invisible="marital_status != 'married'"
+                                   required="marital_status == 'married'"/>
+
+                            <separator/>
+
+                            <field name="emergency_contact_name"/>
+                            <field name="emergency_contact_phone"/>
+                        </group>
                     </group>
                 </sheet>
                 <!-- Chatter-->

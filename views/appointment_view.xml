@@ -63,15 +63,17 @@
                             class="oe_highlight"
                             invisible="state != 'in_consultation'"/>
 
+
                     <button name="action_cancel"
                             string="Cancel"
                             type="object"
                             invisible="state not in ('draft', 'in_consultation')"/>
 
-                    <button name="action_draft"
-                            string="Reset to Draft"
+                    <button name="action_cancel"
+                            string="Cancel"
                             type="object"
-                            invisible="state not in ('done', 'cancel')"/>
+                            class="btn-danger"
+                            invisible="state not in ('draft', 'in_consultation')"/>
     
                     <field name="state"
                            widget="statusbar"
@@ -89,7 +91,7 @@
                      <group>
                          <field name="doctor_id" widget="many2one_avatar_user"/>
                         <field name="patient_id"/>
-                         <field name="ref"/>
+                         <field name="ref" readonly="1"/>
                          <field name="gender"/>
                         <field name="booking_date" help="Date of booking"/>
                      </group>
@@ -139,8 +141,19 @@
         <field name="arch" type="xml">
             <search>
                 <field name="patient_id"/>
+                <field name="doctor_id"/>
                 <field name="booking_date"/>
                 <field name="state"/>
+
+                <separator/>
+
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+
+                <filter name="filter_in_consultation" string="In Consultation" domain="[('state', '=', 'in_consultation')]"/>
+
+                <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
+
+                <filter name="filter_cancelled" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
             </search>
         </field>
     </record>
