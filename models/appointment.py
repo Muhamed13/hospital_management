@@ -30,13 +30,13 @@ class HospitalAppointment(models.Model):
     ], default='draft', tracking=True)
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
 
-    @api.model
-    def create(self, vals):
-        if vals.get('ref', 'New') == 'New':
-            vals['ref'] = self.env['ir.sequence'].next_by_code(
-                'hospital.appointment'
-            )
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('ref', 'New') == 'New':
+                vals['ref'] = self.env['ir.sequence'].next_by_code('hospital.appointment')
+                
+        return super().create(vals_list)
 
     def unlink(self):
         for rec in self:

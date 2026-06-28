@@ -1,7 +1,6 @@
-from email.policy import default
-
 from odoo import api, fields, models, _
 from datetime import date
+from odoo.exceptions import ValidationError
 
 
 class HospitalPatient(models.Model):
@@ -11,7 +10,7 @@ class HospitalPatient(models.Model):
 
     name = fields.Char(string='Name', required=True, tracking=True)
     ref = fields.Char(string='Reference', default='New', readonly=True, copy=False)
-    date_of_birth = fields.Datetime(string='Date of Birth')
+    date_of_birth = fields.Date(string='Date of Birth')
     age = fields.Integer(string='Age', compute='_compute_age', tracking=True)
     gender = fields.Selection([
         ('male', 'Male'),
@@ -28,8 +27,8 @@ class HospitalPatient(models.Model):
         ('single', 'Single'),
     ], string='Material Status', default='single', tracking=True)
     partner_name = fields.Char(string='Partner Name')
-    emergency_contact_name = fields.Char(string='Emergency Contact Name')
-    emergency_contact_phone = fields.Char(string='Emergency Contact Phone')
+    emergency_contact_name = fields.Char(string='Emergency Name')
+    emergency_contact_phone = fields.Char(string='Emergency Phone')
 
 
     # ===== Compute =====
@@ -60,13 +59,20 @@ class HospitalPatient(models.Model):
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
                 raise ValidationError(_("Date of Birth cannot be in the future."))
 
-        # ===== CRUD =====
-        @api.model_create_multi
-        def create(self, vals_list):
-            for vals in vals_list:
-                if vals.get('ref', 'New') == 'New':
-                    vals['ref'] = self.env['ir.sequence'].next_by_code('hospital.patient')
+    # ===== CRUD =====
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('ref', 'New') == 'New':
+                vals['ref'] = self.env['ir.sequence'].next_by_code('hospital.patient')
 
-            return super().create(vals_list)
+        return super().create(vals_list)
+
+    @api.ondelete(at_uninstall=False)
+    def _check_appointments(self):
+        for rec in self:
+            if rec.appointment_ids:
+                raise ValidationError(_("You cannot delete a patient who has existing appointments."))
+
 
 

@@ -15,4 +15,15 @@
     <record id="patient_tag_diabetic" model="patient.tag">
         <field name="name">Diabetic</field>
     </record>
+    <record id="patient_tag_vip" model="patient.tag">
+    <field name="name">VIP</field>
+    </record>
+
+    <record id="patient_tag_follow_up" model="patient.tag">
+        <field name="name">Follow-up</field>
+    </record>
+
+    <record id="patient_tag_senior" model="patient.tag">
+        <field name="name">Senior</field>
+    </record>
 </odoo>
