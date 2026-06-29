@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <record id="action_mark_as_done" model="ir.actions.server">
+        <field name="name">Mark As Done</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="model_hospital_appointment"/>
+        <field name="binding_model_id" ref="model_hospital_appointment"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[    
+        records.action_done()
+        ]]>
+<!--             records.filtered(lambda r: r.state == 'in_consultation').action_done()-->
+<!--             records.action_done()-->
+        </field>
+    </record>
+
     <record id="view_hospital_appointment_activity" model="ir.ui.view">
         <field name="name">hospital.appointment.activity</field>
         <field name="model">hospital.appointment</field>
@@ -19,6 +34,18 @@
                     </div>
                 </templates>
             </activity>
+        </field>
+    </record>
+
+    <record id="view_hospital_appointment_calendar" model="ir.ui.view">
+        <field name="name">hospital.appointment.calendar</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointments" date_start="booking_date" mode="month" date_delay="duration"
+                      color="state">
+                <field name="patient_id"/>
+                <field name="state" filters="1"/>
+            </calendar>
         </field>
     </record>
 
@@ -92,11 +119,14 @@
                     </div>
                     <group>
                      <group>
+                         <field name="patient_ref" readonly="1"/>
                          <field name="doctor_id" widget="many2one_avatar_user"/>
-                        <field name="booking_date" help="Date of booking"/>
                          <field name="gender"/>
+                         <field name="operation_id"/>
+                         <field name="duration"/>
                      </group>
                      <group>
+                         <field name="booking_date" help="Date of booking"/>
                          <field name="appointment_time"/>
                          <field name="hide_sales_price"  invisible="1"/>
                          <field name="priority" widget="priority"/>
@@ -164,7 +194,7 @@
         <field name="name">Appointments</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">tree,form,activity</field>
+        <field name="view_mode">tree,form,calendar,activity</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first appointment !

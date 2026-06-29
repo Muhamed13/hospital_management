@@ -7,6 +7,7 @@ class HospitalAppointment(models.Model):
     _description = 'Hospital Appointment'
     _inherit = ['mail.thread','mail.activity.mixin']
     _rec_name = 'ref'
+    _order = "id desc"
 
     doctor_id = fields.Many2one('res.users', string='Doctor', required=True, tracking=True)
     patient_id = fields.Many2one('hospital.patient', string='Patient', required=True, ondelete='restrict')
@@ -15,6 +16,7 @@ class HospitalAppointment(models.Model):
     appointment_time = fields.Datetime(string='Appointment Time', default=fields.Datetime.now)
     booking_date = fields.Date(string='Booking Date', default=fields.Date.context_today)
     ref = fields.Char(string='Reference', default='New', readonly=True, copy=False)
+    patient_ref = fields.Char(string="Patient Reference", related="patient_id.ref", store=True, readonly=True)
     prescription = fields.Html(string='Prescription')
     priority = fields.Selection([
         ('0', 'Normal'),
@@ -29,6 +31,8 @@ class HospitalAppointment(models.Model):
         ('cancel', 'Cancel')
     ], default='draft', tracking=True)
     hide_sales_price = fields.Boolean(string='Hide Sales Price')
+    operation_id = fields.Many2one('hospital.operation', string='Operation')
+    duration = fields.Float(string='Duration')
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -48,9 +52,16 @@ class HospitalAppointment(models.Model):
         for rec in self:
             rec.state = 'in_consultation'
 
+    # def action_done(self):
+    #     for rec in self:
+    #         rec.state = 'done'
+
     def action_done(self):
         for rec in self:
-            rec.state = 'done'
+            if rec.state != "in_consultation":
+                raise ValidationError("Only appointments that are in consultation can be marked as Done.")
+
+            rec.state = "done"
 
     def action_cancel(self):
         action = self.env.ref(

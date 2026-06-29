@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from datetime import date
 from odoo.exceptions import ValidationError
+from dateutil.relativedelta import relativedelta
 
 
 class HospitalPatient(models.Model):
@@ -11,11 +12,14 @@ class HospitalPatient(models.Model):
     name = fields.Char(string='Name', required=True, tracking=True)
     ref = fields.Char(string='Reference', default='New', readonly=True, copy=False)
     date_of_birth = fields.Date(string='Date of Birth')
-    age = fields.Integer(string='Age', compute='_compute_age', tracking=True)
+    age = fields.Integer(string='Age', compute='_compute_age', search='_search_age', tracking=True)
     gender = fields.Selection([
         ('male', 'Male'),
         ('female', 'Female'),
     ], tracking=True, default='male')
+    phone = fields.Char(string='Phone Number')
+    email = fields.Char(string='Email')
+    website = fields.Char(string='Website')
     active = fields.Boolean(string='Active', default=True)
     image = fields.Image(string='Image')
     appointment_id = fields.Many2one('hospital.appointment', string='Appointment')
@@ -29,7 +33,6 @@ class HospitalPatient(models.Model):
     partner_name = fields.Char(string='Partner Name')
     emergency_contact_name = fields.Char(string='Emergency Name')
     emergency_contact_phone = fields.Char(string='Emergency Phone')
-
 
     # ===== Compute =====
     @api.depends('appointment_ids')
@@ -46,6 +49,20 @@ class HospitalPatient(models.Model):
             else:
                 rec.age = 0
 
+    def _search_age(self, operator, value):
+        if operator     != "=":
+            raise NotImplementedError("This search currently supports only '=' operator.")
+
+        today = date.today()
+
+        date_to = today - relativedelta(years=value)
+        date_from = date_to - relativedelta(years=1) + relativedelta(days=1)
+
+        return [
+            ("date_of_birth", ">=", date_from),
+            ("date_of_birth", "<=", date_to),
+        ]
+
     # ===== Constraints =====
     @api.constrains('marital_status', 'partner_name')
     def _check_partner_name(self):
@@ -58,6 +75,7 @@ class HospitalPatient(models.Model):
         for rec in self:
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
                 raise ValidationError(_("Date of Birth cannot be in the future."))
+
 
     # ===== CRUD =====
     @api.model_create_multi

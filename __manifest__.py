@@ -26,7 +26,10 @@
     'views/female_patient_view.xml',
     'views/appointment_view.xml',
     'views/patient_tag_view.xml',
-],
+    'views/hospital_config_settings_view.xml',
+    'views/hospital_operation_view.xml',
+
+    ],
 
     'demo': [],
 

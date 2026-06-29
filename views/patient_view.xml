@@ -8,6 +8,7 @@
             <tree export_xlsx="0">
                 <field name="name" string="Patient Name"/>
                 <field name="ref"/>
+                <field name="appointment_count" sum="Total Appointment"/>
                 <field name="age"/>
                 <field name="gender"/>
             </tree>
@@ -30,28 +31,38 @@
                             <field name="name" nolabel="1"/>
                         </h1>
                     </div>
-                    <group>
+                    <group string="General Information">
                         <group>
                             <field name="ref"/>
-                            <field name="gender"/>
                             <field name="date_of_birth"/>
                             <field name="age"/>
+                            <field name="gender" widget="radio"/>
                         </group>
+
                         <group>
                             <field name="appointment_id"/>
                             <field name="appointment_count"/>
-                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="tag_ids"
+                                   widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
                             <field name="active" invisible="1"/>
                         </group>
                     </group>
-                    <group string="Other Information">
-                        <group>
+                    <group>
+                        <group string="Other Information">
                             <field name="marital_status"/>
                             <field name="partner_name"
                                    invisible="marital_status != 'married'"
                                    required="marital_status == 'married'"/>
                         </group>
 
+                        <group string="Contact Information">
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="website" widget="url"/>
+                        </group>
+                    </group>
+                    <group>
                         <group string="Emergency Contact">
                             <field name="emergency_contact_name"/>
                             <field name="emergency_contact_phone"/>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="hospital_config_settings_view_form" model="ir.ui.view">
+        <field name="name">hospital.config.settings.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+
+                <app data-string="Hospital Management"
+                     string="Hospital Management"
+                     name="hospital_management">
+
+                    <block title="Appointments">
+
+                        <setting id="cancel_days_setting"
+                                 string="Cancellation Days"
+                                 help="Number of days before appointment cancellation.">
+
+                            <field name="cancel_days"/>
+
+                        </setting>
+
+                    </block>
+
+                </app>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="hospital_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'hospital_management'}</field>
+    </record>
+
+    <menuitem id="hospital_config_settings_menu"
+              name="Settings"
+              parent="hospital_management.menu_configuration"
+              sequence="100"
+              action="hospital_config_settings_action"
+              groups="base.group_system"/>
+
+</odoo>
