@@ -21,6 +21,11 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_appointments" icon="fa-star">
+                            <field string="Appointment" name="appointment_count" widget="statinfo"/>
+                        </button>
+                    </div>
                     <field name="image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
                         <div class="oe_edit_only">
@@ -41,7 +46,7 @@
 
                         <group>
                             <field name="appointment_id"/>
-                            <field name="appointment_count"/>
+                            <field name="appointment_count" invisible="1"/>
                             <field name="tag_ids"
                                    widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>

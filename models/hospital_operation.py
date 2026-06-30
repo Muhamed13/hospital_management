@@ -3,6 +3,7 @@ from odoo import fields, models, api
 class HospitalOperation(models.Model):
     _name = "hospital.operation"
     _description = "Hospital Operation"
+    _order = "sequence,id"
 
     name = fields.Char(string='Name', required=True)
     doctor_id = fields.Many2one("res.users", string="Doctor", required=True)

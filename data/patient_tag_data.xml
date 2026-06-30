@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <record id="patient_tag_vip" model="patient.tag">
+    <data noupdate="1">
+
+        <record id="patient_tag_vip" model="patient.tag">
         <field name="name">VIP</field>
-    </record>
+        </record>
 
-    <record id="patient_tag_emergency" model="patient.tag">
-        <field name="name">Emergency</field>
-    </record>
+        <record id="patient_tag_emergency" model="patient.tag">
+            <field name="name">Emergency</field>
+        </record>
 
-    <record id="patient_tag_child" model="patient.tag">
-        <field name="name">Child</field>
-    </record>
+        <record id="patient_tag_child" model="patient.tag">
+            <field name="name">Child</field>
+        </record>
 
-    <record id="patient_tag_diabetic" model="patient.tag">
-        <field name="name">Diabetic</field>
-    </record>
-    <record id="patient_tag_vip" model="patient.tag">
-    <field name="name">VIP</field>
-    </record>
+        <record id="patient_tag_diabetic" model="patient.tag">
+            <field name="name">Diabetic</field>
+        </record>
 
-    <record id="patient_tag_follow_up" model="patient.tag">
-        <field name="name">Follow-up</field>
-    </record>
+        <record id="patient_tag_follow_up" model="patient.tag">
+            <field name="name">Follow-up</field>
+        </record>
 
-    <record id="patient_tag_senior" model="patient.tag">
-        <field name="name">Senior</field>
-    </record>
+        <record id="patient_tag_senior" model="patient.tag">
+            <field name="name">Senior</field>
+        </record>
+
+    </data>
 </odoo>

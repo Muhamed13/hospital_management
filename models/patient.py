@@ -35,10 +35,28 @@ class HospitalPatient(models.Model):
     emergency_contact_phone = fields.Char(string='Emergency Phone')
 
     # ===== Compute =====
+    # @api.depends("appointment_id")
+    # def _compute_appointment_count(self):
+    #     for patient in self:
+    #         patient.appointment_count = self.env["hospital.appointment"].search_count([
+    #             ("patient_id", "=", patient.id)
+    #         ])
+
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
         for rec in self:
             rec.appointment_count = len(rec.appointment_ids)
+
+    # @api.depends('appointment_ids')
+    # def _compute_appointment_count(self):
+    #     appointment_group = self.env['hospital.appointment'].read_group(domain=[],
+    #                                                                     fields=['patient_id'], groupby=['patient_id'])
+    #     for rec in self:
+    #         rec.appointment_count = 0
+    #
+    #     for group in appointment_group:
+    #         patient = self.browse(group['patient_id'][0])
+    #         patient.appointment_count = group['patient_id_count']
 
     @api.depends('date_of_birth')
     def _compute_age(self):
@@ -93,4 +111,13 @@ class HospitalPatient(models.Model):
                 raise ValidationError(_("You cannot delete a patient who has existing appointments."))
 
 
-
+    def action_view_appointments(self):
+        return{
+            'name': _('Appointments'),
+            'res_model': 'hospital.appointment',
+            'view_mode': 'tree,form,calendar,activity',
+            'context': {'default_patient_id': self.id},
+            'domain': [('patient_id', '=', self.id)],
+            'target': 'current',
+            'type': 'ir.actions.act_window',
+        }
