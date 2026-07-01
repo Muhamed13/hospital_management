@@ -90,12 +90,6 @@
                             class="oe_highlight"
                             invisible="state != 'in_consultation'"/>
 
-
-                    <button name="action_cancel"
-                            string="Cancel"
-                            type="object"
-                            invisible="state not in ('draft', 'in_consultation')"/>
-
                     <button name="action_cancel"
                             string="Cancel"
                             type="object"
@@ -106,15 +100,30 @@
                            widget="statusbar"
                            statusbar_visible="draft,in_consultation,done,cancel"/>
 
-                    <button name="action_share_whatsapp"
-                            string="Share In Whatsapp"
-                            type="object"
-                            class="oe_highlight"
-                            icon="fa-whatsapp"/>
-
                 </header>
 
                 <sheet>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_share_whatsapp"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-whatsapp">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">WhatsApp</span>
+                            </div>
+                        </button>
+
+                        <button name="%(action_appointment_report)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-print">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Print</span>
+                            </div>
+                        </button>
+                    </div>
+
                     <div>
                         <h1>
                             <field name="ref" readonly="1"/>
@@ -135,7 +144,7 @@
                          <field name="booking_date" help="Date of booking"/>
                          <field name="appointment_time"/>
                          <field name="company_id" groups="base.group_multi_company"/>
-                         <field name="currency_id" groups="base.group_multi_currency"/>
+                         <field name="currency_id" invisible="1"/>
                          <field name="hide_sales_price"  invisible="1"/>
                          <field name="priority" widget="priority"/>
                      </group>
@@ -150,7 +159,7 @@
                                 <tree editable="bottom">
                                     <field name="product_id"/>
                                     <field name="price_unit" widget="monetary"
-                                           options="{'currency_field': 'currency_id'}"
+                                           options="{'currency_field': 'currency_id', 'fields_digits': True}"
                                            column_invisible="parent.hide_sales_price"/>
                                     <field name="qty"/>
                                     <field name="currency_id" column_invisible="1"/>
@@ -159,7 +168,8 @@
                                 <form>
                                     <group>
                                         <field name="product_id"/>
-                                        <field name="price_unit"/>
+                                        <field name="price_unit"
+                                               column_invisible="parent.hide_sales_price"/>
                                         <field name="qty"/>
                                     </group>
                                 </form>

@@ -114,7 +114,7 @@ class AppointmentPharmacyLines(models.Model):
     _description = 'Appointment Pharmacy Lines'
 
     product_id = fields.Many2one('product.product', string='Product', required=True)
-    price_unit = fields.Float(related='product_id.list_price', string='Sales Price')
+    price_unit = fields.Float(related='product_id.list_price', string='Sales Price', digits='Product Price')
     qty = fields.Integer(string='Quantity', default=1)
     appointment_id = fields.Many2one('hospital.appointment', string='Appointment',
                                      required=True, ondelete='cascade')

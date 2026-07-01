@@ -19,8 +19,6 @@
     'data/appointment_sequence.xml',
     'data/patient_tag_data.xml',
 
-    'wizard/cancel_appointment_view.xml',
-
     'views/base_menu.xml',
     'views/patient_view.xml',
     'views/female_patient_view.xml',
@@ -29,9 +27,11 @@
     'views/hospital_config_settings_view.xml',
     'views/hospital_operation_view.xml',
 
-    ],
+    'wizard/cancel_appointment_view.xml',
 
-    'demo': [],
+    'report/appointment_report.xml',
+
+    ],
 
     'auto_install': False,
     'license': 'LGPL-3',
