@@ -13,19 +13,26 @@ class CancelAppointmentWizard(models.TransientModel):
 
     @api.model
     def default_get(self, fields_list):
+        """Prefill wizard values from the active appointment."""
+
         res = super().default_get(fields_list)
 
         res["date_cancel"] = fields.Date.today()
 
-        if self.env.context.get("active_id"):
-            res["appointment_id"] = self.env.context.get("active_id")
+        active_id = self.env.context.get("active_id")
+        if active_id:
+            res["appointment_id"] = active_id
 
         return res
 
     def action_cancel(self):
+        """Cancel the appointment if it satisfies the cancellation policy."""
+
         self.ensure_one()
 
-        cancel_days = int(self.env["ir.config_parameter"].sudo().get_param("hospital_management.cancel_days"))
+        cancel_days = int(
+            self.env["ir.config_parameter"].sudo()
+            .get_param("hospital_management.cancel_days", default=1))
         booking_date = self.appointment_id.booking_date
         allowed_cancel_date = booking_date - relativedelta(days=cancel_days)
 

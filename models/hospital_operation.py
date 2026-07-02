@@ -7,17 +7,16 @@ class HospitalOperation(models.Model):
 
     name = fields.Char(string='Name', required=True)
     doctor_id = fields.Many2one("res.users", string="Doctor", required=True)
-    # ref = fields.Reference([
-    #     ("hospital.patient", "Patient"),
-    #     ("hospital.appointment", "Appointment")
-    # ], string="Reference")
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
 
     _sql_constraints = [("operation_name_unique", "unique(name)", "Operation name must be unique.")]
 
+    # ===== CRUD Methods =====
     @api.model
     def name_create(self, name):
+        """Create a new operation from a Many2one field."""
+
         operation = self.create({
             "name": name,
         })

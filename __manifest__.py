@@ -4,10 +4,17 @@
     'version': '17.0.1.0',
     'category': 'Hospital',
     'summary': 'Hospital Management System',
-    'description': """
-        Hospital Management System
-    """,
+    "description": """
+Hospital Management
 
+Features:
+- Manage Patients
+- Manage Appointments
+- Pharmacy Billing
+- Hospital Operations
+- Appointment PDF Report
+- WhatsApp Appointment Sharing
+""",
     'depends': ['base',
                 'mail',
                 'product'],

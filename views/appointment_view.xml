@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- Server Actions -->
     <record id="action_mark_as_done" model="ir.actions.server">
         <field name="name">Mark As Done</field>
         <field name="type">ir.actions.server</field>
@@ -11,11 +12,10 @@
         <field name="code"><![CDATA[    
         records.action_done()
         ]]>
-<!--             records.filtered(lambda r: r.state == 'in_consultation').action_done()-->
-<!--             records.action_done()-->
         </field>
     </record>
 
+    <!-- Activity View -->
     <record id="view_hospital_appointment_activity" model="ir.ui.view">
         <field name="name">hospital.appointment.activity</field>
         <field name="model">hospital.appointment</field>
@@ -37,6 +37,7 @@
         </field>
     </record>
 
+    <!-- Calendar View -->
     <record id="view_hospital_appointment_calendar" model="ir.ui.view">
         <field name="name">hospital.appointment.calendar</field>
         <field name="model">hospital.appointment</field>
@@ -49,6 +50,7 @@
         </field>
     </record>
 
+    <!-- Tree View -->
     <record id="view_hospital_appointment_tree" model="ir.ui.view">
         <field name="name">hospital.appointment.tree</field>
         <field name="model">hospital.appointment</field>
@@ -71,6 +73,7 @@
         </field>
     </record>
 
+    <!-- Form View -->
     <record id="view_hospital_appointment_form" model="ir.ui.view">
         <field name="name">hospital.appointment.form</field>
         <field name="model">hospital.appointment</field>
@@ -103,7 +106,7 @@
                 </header>
 
                 <sheet>
-
+                    <!-- Smart Buttons -->
                     <div class="oe_button_box" name="button_box">
                         <button name="action_share_whatsapp"
                                 type="object"
@@ -140,6 +143,7 @@
                          <field name="operation_id"/>
                          <field name="duration"/>
                      </group>
+                        <!-- Appointment Information -->
                      <group>
                          <field name="booking_date" help="Date of booking"/>
                          <field name="appointment_time"/>
@@ -191,6 +195,7 @@
         </field>
     </record>
 
+    <!-- Search View -->
     <record id="view_hospital_appointment_search" model="ir.ui.view">
         <field name="name">hospital.appointment.search</field>
         <field name="model">hospital.appointment</field>
@@ -221,7 +226,7 @@
         <field name="view_mode">tree,form,calendar,activity</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create your first appointment !
+                Create your first appointment!
             </p>
         </field>
     </record>

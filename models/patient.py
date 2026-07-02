@@ -34,41 +34,36 @@ class HospitalPatient(models.Model):
     emergency_contact_name = fields.Char(string='Emergency Name')
     emergency_contact_phone = fields.Char(string='Emergency Phone')
 
-    # ===== Compute =====
-    # @api.depends("appointment_id")
-    # def _compute_appointment_count(self):
-    #     for patient in self:
-    #         patient.appointment_count = self.env["hospital.appointment"].search_count([
-    #             ("patient_id", "=", patient.id)
-    #         ])
 
+    # ===== Compute Methods =====
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
         for rec in self:
             rec.appointment_count = len(rec.appointment_ids)
 
-    # @api.depends('appointment_ids')
-    # def _compute_appointment_count(self):
-    #     appointment_group = self.env['hospital.appointment'].read_group(domain=[],
-    #                                                                     fields=['patient_id'], groupby=['patient_id'])
-    #     for rec in self:
-    #         rec.appointment_count = 0
-    #
-    #     for group in appointment_group:
-    #         patient = self.browse(group['patient_id'][0])
-    #         patient.appointment_count = group['patient_id_count']
-
-    @api.depends('date_of_birth')
+    @api.depends("date_of_birth")
     def _compute_age(self):
+        """Compute patient age from date of birth."""
+
+        today = date.today()
+
         for rec in self:
-            today = date.today()
             if rec.date_of_birth:
-                rec.age = today.year - rec.date_of_birth.year
+                age = today.year - rec.date_of_birth.year
+
+                if (today.month, today.day) < (
+                        rec.date_of_birth.month,
+                        rec.date_of_birth.day
+                ):
+                    age -= 1
+
+                rec.age = age
             else:
                 rec.age = 0
 
+    # ===== Search Method =====
     def _search_age(self, operator, value):
-        if operator     != "=":
+        if operator != "=":
             raise NotImplementedError("This search currently supports only '=' operator.")
 
         today = date.today()
@@ -81,7 +76,7 @@ class HospitalPatient(models.Model):
             ("date_of_birth", "<=", date_to),
         ]
 
-    # ===== Constraints =====
+    # ===== Constraint Methods =====
     @api.constrains('marital_status', 'partner_name')
     def _check_partner_name(self):
         for rec in self:
@@ -94,30 +89,36 @@ class HospitalPatient(models.Model):
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
                 raise ValidationError(_("Date of Birth cannot be in the future."))
 
-
-    # ===== CRUD =====
+    # ===== CRUD Method =====
     @api.model_create_multi
     def create(self, vals_list):
+        """Generate patient sequence before record creation."""
+
         for vals in vals_list:
             if vals.get('ref', 'New') == 'New':
                 vals['ref'] = self.env['ir.sequence'].next_by_code('hospital.patient')
 
         return super().create(vals_list)
 
+    # ===== OnDelete Method =====
     @api.ondelete(at_uninstall=False)
     def _check_appointments(self):
         for rec in self:
             if rec.appointment_ids:
                 raise ValidationError(_("You cannot delete a patient who has existing appointments."))
 
-
+    # ===== Action Method=====
     def action_view_appointments(self):
-        return{
-            'name': _('Appointments'),
-            'res_model': 'hospital.appointment',
-            'view_mode': 'tree,form,calendar,activity',
-            'context': {'default_patient_id': self.id},
-            'domain': [('patient_id', '=', self.id)],
-            'target': 'current',
-            'type': 'ir.actions.act_window',
+        """Open appointments related to the current patient."""
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Appointments"),
+            "res_model": "hospital.appointment",
+            "view_mode": "tree,form,calendar,activity",
+            "domain": [("patient_id", "=", self.id)],
+            "context": {
+                "default_patient_id": self.id,
+            },
+            "target": "current",
         }
